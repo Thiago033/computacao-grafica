@@ -79,10 +79,17 @@ function main() {
 
   // First let's make some variables
   // to hold the translation,
-  var translation = [150, 100];
-  var rotationInRadians = 0;
-  var scale = [1, 1];
-  var color = [Math.random(), Math.random(), Math.random(), 1];
+  // First set of variables for the first figure
+  var translation1 = [150, 100];
+  var rotationInRadians1 = 0;
+  var scale1 = [1, 1];
+  var color1 = [Math.random(), Math.random(), Math.random(), 1];
+
+  // Second set of variables for the second figure
+  var translation2 = [300, 200];
+  var rotationInRadians2 = 45 * Math.PI / 180; // Example rotation angle in radians
+  var scale2 = [0.5, 0.5]; // Example scale values
+  var color2 = [Math.random(), Math.random(), Math.random(), 1];
 
   drawScene();
 
@@ -147,6 +154,12 @@ function main() {
     var offset = 0;
     var count = 18;
     gl.drawArrays(primitiveType, offset, count);
+
+    // Draw the first figure
+    drawFigure(translation1, rotationInRadians1, scale1, color1);
+
+    // Draw the second figure
+    drawFigure(translation2, rotationInRadians2, scale2, color2);
   }
 }
 
@@ -265,5 +278,70 @@ var m3 = {
     return m3.multiply(m, m3.scaling(sx, sy));
   },
 };
+
+main();
+
+function main() {
+  // ... (existing code for context, shader compilation, etc.)
+
+  // First set of variables for the first figure
+  var translation1 = [150, 100];
+  var rotationInRadians1 = 0;
+  var scale1 = [1, 1];
+  var color1 = [Math.random(), Math.random(), Math.random(), 1];
+
+  // Second set of variables for the second figure
+  var translation2 = [300, 200];
+  var rotationInRadians2 = 45 * Math.PI / 180; // Example rotation angle in radians
+  var scale2 = [0.5, 0.5]; // Example scale values
+  var color2 = [Math.random(), Math.random(), Math.random(), 1];
+
+  drawScene(); // Draw the initial scene
+
+  // Setup sliders for the first figure
+  webglLessonsUI.setupSlider("#x", {value: translation1[0], slide: updatePosition(0, translation1), max: gl.canvas.width});
+  webglLessonsUI.setupSlider("#y", {value: translation1[1], slide: updatePosition(1, translation1), max: gl.canvas.height});
+  // ... (setup sliders for angle, scaleX, scaleY for the first figure)
+
+  // Setup sliders for the second figure
+  webglLessonsUI.setupSlider("#x2", {value: translation2[0], slide: updatePosition(0, translation2), max: gl.canvas.width});
+  webglLessonsUI.setupSlider("#y2", {value: translation2[1], slide: updatePosition(1, translation2), max: gl.canvas.height});
+  // ... (setup sliders for angle, scaleX, scaleY for the second figure)
+
+  // ... (existing code)
+
+  // Draw the scene with both figures
+  function drawScene() {
+    // ... (existing code for resizing canvas, clearing, etc.)
+
+    // Draw the first figure
+    drawFigure(translation1, rotationInRadians1, scale1, color1);
+
+    // Draw the second figure
+    drawFigure(translation2, rotationInRadians2, scale2, color2);
+  }
+
+  // Draw a figure with given transformation parameters
+  function drawFigure(translation, rotationInRadians, scale, color) {
+    // ... (existing code for setting up matrices, uniforms, etc.)
+
+    // Set the color.
+    gl.uniform4fv(colorLocation, color);
+
+    // Compute the matrix for the figure
+    var matrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
+    matrix = m3.translate(matrix, translation[0], translation[1]);
+    matrix = m3.rotate(matrix, rotationInRadians);
+    matrix = m3.scale(matrix, scale[0], scale[1]);
+
+    // Set the matrix.
+    gl.uniformMatrix3fv(matrixLocation, false, matrix);
+
+    // Draw the geometry.
+    gl.drawArrays(primitiveType, offset, count);
+  }
+}
+
+// ... (existing code for setGeometry, m3 object, etc.)
 
 main();
