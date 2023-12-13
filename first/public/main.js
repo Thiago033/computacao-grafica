@@ -30,7 +30,6 @@ void main() {
 }
 `;
 
-
 function main() {
   // Get A WebGL context
   /** @type {HTMLCanvasElement} */
@@ -79,41 +78,47 @@ function main() {
 
   // First let's make some variables
   // to hold the translation,
-  // First set of variables for the first figure
-  var translation1 = [150, 100];
-  var rotationInRadians1 = 0;
-  var scale1 = [1, 1];
-  var color1 = [Math.random(), Math.random(), Math.random(), 1];
+  var translation = [150, 100];
+  var rotationInRadians = 0;
+  var scale = [1, 1];
+  var color = [Math.random(), Math.random(), Math.random(), 1];
 
-  // Second set of variables for the second figure
-  var translation2 = [300, 200];
-  var rotationInRadians2 = 45 * Math.PI / 180; // Example rotation angle in radians
-  var scale2 = [0.5, 0.5]; // Example scale values
+  var translation2 = [300, 150];
+  var rotationInRadians2 = 0;
+  var scale2 = [1, 1];
   var color2 = [Math.random(), Math.random(), Math.random(), 1];
+
 
   drawScene();
 
   // Setup a ui.
-  webglLessonsUI.setupSlider("#x",      {value: translation[0], slide: updatePosition(0), max: gl.canvas.width });
-  webglLessonsUI.setupSlider("#y",      {value: translation[1], slide: updatePosition(1), max: gl.canvas.height});
-  webglLessonsUI.setupSlider("#angle",  {value: rotationInRadians * 180 / Math.PI | 0, slide: updateAngle, max: 360});
-  webglLessonsUI.setupSlider("#scaleX", {value: scale[0], slide: updateScale(0), min: -5, max: 5, step: 0.01, precision: 2});
-  webglLessonsUI.setupSlider("#scaleY", {value: scale[1], slide: updateScale(1), min: -5, max: 5, step: 0.01, precision: 2});
+  webglLessonsUI.setupSlider("#x",      {value: translation[0], slide: updatePosition(0, translation), max: gl.canvas.width });
+  webglLessonsUI.setupSlider("#y",      {value: translation[1], slide: updatePosition(1, translation), max: gl.canvas.height});
+  // webglLessonsUI.setupSlider("#angle",  {value: rotationInRadians * 180 / Math.PI | 0, slide: updateAngle(rotationInRadians), max: 360});
+  webglLessonsUI.setupSlider("#scaleX", {value: scale[0], slide: updateScale(0, scale), min: -5, max: 5, step: 0.01, precision: 2});
+  webglLessonsUI.setupSlider("#scaleY", {value: scale[1], slide: updateScale(1, scale), min: -5, max: 5, step: 0.01, precision: 2});
 
-  function updatePosition(index) {
+  webglLessonsUI.setupSlider("#x2", { value: translation2[0], slide: updatePosition(0, translation2), max: gl.canvas.width });
+  webglLessonsUI.setupSlider("#y2", { value: translation2[1], slide: updatePosition(1, translation2), max: gl.canvas.height });
+  // webglLessonsUI.setupSlider("#angle2", { value: rotationInRadians2 * 180 / Math.PI | 0, slide: updateAngle), max: 360 });
+  webglLessonsUI.setupSlider("#scaleX2", { value: scale2[0], slide: updateScale(0, scale2), min: -5, max: 5, step: 0.01, precision: 2 });
+  webglLessonsUI.setupSlider("#scaleY2", { value: scale2[1], slide: updateScale(1, scale2), min: -5, max: 5, step: 0.01, precision: 2 });
+
+  function updatePosition(index, translation) {
     return function(event, ui) {
       translation[index] = ui.value;
       drawScene();
     };
   }
 
-  function updateAngle(event, ui) {
+  function updateAngle(ui, rotationInRadians) {
+    console.log(ui.value)
     var angleInDegrees = 360 - ui.value;
     rotationInRadians = angleInDegrees * Math.PI / 180;
     drawScene();
   }
 
-  function updateScale(index) {
+  function updateScale(index, scale) {
     return function(event, ui) {
       scale[index] = ui.value;
       drawScene();
@@ -137,29 +142,45 @@ function main() {
     // Bind the attribute/buffer set we want.
     gl.bindVertexArray(vao);
 
-    // Set the color.
+    // ===============================
+
+    // // Set the color.
+    // gl.uniform4fv(colorLocation, color);
+
+    // // Compute the matrix
+    // var matrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
+    // matrix = m3.translate(matrix, translation[0], translation[1]);
+    // matrix = m3.rotate(matrix, rotationInRadians);
+    // matrix = m3.scale(matrix, scale[0], scale[1]);
+
+    // // Set the matrix.
+    // gl.uniformMatrix3fv(matrixLocation, false, matrix);
+
+    // // Draw the geometry.
+    // var primitiveType = gl.TRIANGLES;
+    // var offset = 0;
+    // var count = 18;
+    // gl.drawArrays(primitiveType, offset, count);
+
+    // Draw the first 'F'
     gl.uniform4fv(colorLocation, color);
+    var matrix1 = computeMatrix(translation, rotationInRadians, scale, gl.canvas.clientWidth, gl.canvas.clientHeight);
+    gl.uniformMatrix3fv(matrixLocation, false, matrix1);
+    gl.drawArrays(gl.TRIANGLES, 0, 18);
 
-    // Compute the matrix
-    var matrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
-    matrix = m3.translate(matrix, translation[0], translation[1]);
-    matrix = m3.rotate(matrix, rotationInRadians);
-    matrix = m3.scale(matrix, scale[0], scale[1]);
+    // Draw the second 'F'
+    gl.uniform4fv(colorLocation, color2);
+    var matrix2 = computeMatrix(translation2, rotationInRadians2, scale2, gl.canvas.clientWidth, gl.canvas.clientHeight);
+    gl.uniformMatrix3fv(matrixLocation, false, matrix2);
+    gl.drawArrays(gl.TRIANGLES, 0, 18);
+  }
 
-    // Set the matrix.
-    gl.uniformMatrix3fv(matrixLocation, false, matrix);
-
-    // Draw the geometry.
-    var primitiveType = gl.TRIANGLES;
-    var offset = 0;
-    var count = 18;
-    gl.drawArrays(primitiveType, offset, count);
-
-    // Draw the first figure
-    drawFigure(translation1, rotationInRadians1, scale1, color1);
-
-    // Draw the second figure
-    drawFigure(translation2, rotationInRadians2, scale2, color2);
+  function computeMatrix(translation, rotationInRadians, scale, width, height) {
+      var matrix = m3.projection(width, height);
+      matrix = m3.translate(matrix, translation[0], translation[1]);
+      matrix = m3.rotate(matrix, rotationInRadians);
+      matrix = m3.scale(matrix, scale[0], scale[1]);
+      return matrix;
   }
 }
 
@@ -277,71 +298,7 @@ var m3 = {
   scale: function(m, sx, sy) {
     return m3.multiply(m, m3.scaling(sx, sy));
   },
+  
 };
-
-main();
-
-function main() {
-  // ... (existing code for context, shader compilation, etc.)
-
-  // First set of variables for the first figure
-  var translation1 = [150, 100];
-  var rotationInRadians1 = 0;
-  var scale1 = [1, 1];
-  var color1 = [Math.random(), Math.random(), Math.random(), 1];
-
-  // Second set of variables for the second figure
-  var translation2 = [300, 200];
-  var rotationInRadians2 = 45 * Math.PI / 180; // Example rotation angle in radians
-  var scale2 = [0.5, 0.5]; // Example scale values
-  var color2 = [Math.random(), Math.random(), Math.random(), 1];
-
-  drawScene(); // Draw the initial scene
-
-  // Setup sliders for the first figure
-  webglLessonsUI.setupSlider("#x", {value: translation1[0], slide: updatePosition(0, translation1), max: gl.canvas.width});
-  webglLessonsUI.setupSlider("#y", {value: translation1[1], slide: updatePosition(1, translation1), max: gl.canvas.height});
-  // ... (setup sliders for angle, scaleX, scaleY for the first figure)
-
-  // Setup sliders for the second figure
-  webglLessonsUI.setupSlider("#x2", {value: translation2[0], slide: updatePosition(0, translation2), max: gl.canvas.width});
-  webglLessonsUI.setupSlider("#y2", {value: translation2[1], slide: updatePosition(1, translation2), max: gl.canvas.height});
-  // ... (setup sliders for angle, scaleX, scaleY for the second figure)
-
-  // ... (existing code)
-
-  // Draw the scene with both figures
-  function drawScene() {
-    // ... (existing code for resizing canvas, clearing, etc.)
-
-    // Draw the first figure
-    drawFigure(translation1, rotationInRadians1, scale1, color1);
-
-    // Draw the second figure
-    drawFigure(translation2, rotationInRadians2, scale2, color2);
-  }
-
-  // Draw a figure with given transformation parameters
-  function drawFigure(translation, rotationInRadians, scale, color) {
-    // ... (existing code for setting up matrices, uniforms, etc.)
-
-    // Set the color.
-    gl.uniform4fv(colorLocation, color);
-
-    // Compute the matrix for the figure
-    var matrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
-    matrix = m3.translate(matrix, translation[0], translation[1]);
-    matrix = m3.rotate(matrix, rotationInRadians);
-    matrix = m3.scale(matrix, scale[0], scale[1]);
-
-    // Set the matrix.
-    gl.uniformMatrix3fv(matrixLocation, false, matrix);
-
-    // Draw the geometry.
-    gl.drawArrays(primitiveType, offset, count);
-  }
-}
-
-// ... (existing code for setGeometry, m3 object, etc.)
 
 main();
