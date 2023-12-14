@@ -564,8 +564,6 @@ function setColors(gl) {
       gl.STATIC_DRAW);
 }
 
-
-
 var m4 = {
 
   perspective: function(fieldOfViewInRadians, aspect, near, far) {
