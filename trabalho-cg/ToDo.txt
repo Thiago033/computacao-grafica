@@ -15,3 +15,5 @@ Problema:
             ]
         ]
     }
+
+https://webglfundamentals.org/webgl/lessons/webgl-load-obj.html

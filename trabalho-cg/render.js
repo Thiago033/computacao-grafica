@@ -112,7 +112,7 @@ setInterval(() => {
     scenario.time += dt;
 
     scenario.objs.forEach(obj => {
-        obj.rotation.z = (obj.rotation.z + 45 * dt) % 360;
+        //obj.rotation.z = (obj.rotation.z + 45 * dt) % 360;
     });
     
     render();
