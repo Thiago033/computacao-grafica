@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Engine</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="main">
+        <div class="column">
+            <div class="element">
+                <h2>Objects</h2>
+                <div id="scenario-objects"></div>
+            </div>
+
+            <div class="element">
+                <h2>Inspect</h2> <span id="inspect-obj">---</span>
+                <hr style="width: 60%;">
+                <br>
+                <h2>Transform</h2>
+                <span>X: <input type="number" id="transform-x"></span>
+                <span>Y: <input type="number" id="transform-y"></span>
+                <span>Z: <input type="number" id="transform-z"></span>
+                <br>
+                <h2>Scale</h2>
+                <span>X: <input type="number" id="scale-x"></span>
+                <span>Y: <input type="number" id="scale-y"></span>
+                <span>Z: <input type="number" id="scale-z"></span>
+                <h2>Rotation</h2>
+                <span>Pitch: <input type="number" id="rot-pitch"></span>
+                <span>Yaw: <input type="number" id="rot-yaw"></span>
+                <span>Roll: <input type="number" id="rot-roll"></span>
+                <br>
+                <h2>Color</h2>
+                <input type="color" id="color">
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="element">
+                <canvas id="canvas" width="900px" height="700px"></canvas>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="element overflow" id="loaded-objects"></div>
+            <div class="drag-drop">
+                <input type="file" accept=".obj" multiple id="fileInput">
+            </div>
+        </div>
+    </div>
+
+    <script src="Vector.js"></script>
+    <script src="scenario.js"></script>
+    <script src="render.js"></script>
+    <script src="interface.js"></script>
+    <script src="environment.js"></script>
+</body>
+</html>
